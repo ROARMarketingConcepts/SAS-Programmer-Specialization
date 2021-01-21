@@ -1,13 +1,14 @@
-/*************************/
-/*  					 */
-/* 	Tourism Case Study 	 */
-/*  					 */
-/* 	Ken Wood 			 */
-/* 	January 21, 2021 	 */
-/*						 */
-/*************************/
+/************************************************/
+/*  											*/
+/* 				Tourism Case Study 				*/
+/*  											*/
+/* 					Ken Wood 					*/
+/* 				January 21, 2021 				*/
+/*												*/
+/************************************************/
 
 data cleaned_tourism trash;
+	length Country $ 55.;
 	set cr.tourism;
 	
 /* 	Create new column "Country_Name" for the country name */
@@ -80,7 +81,7 @@ run;
 
 data cleaned_tourism;
   set cleaned_tourism (keep=Country);
-  set cleaned_tourism ;
+  set cleaned_tourism;
   keep Country Tourism_Type Category Series Y2014;
 run;
 
@@ -109,7 +110,11 @@ data final_tourism nocountryfound;
 	else output final_tourism;
 run;
 
+data contfmt;
+	retain FmtName "contfmt";
+	set cr.continent_codes (rename=(Code=Start Continent=Label));
+	keep FmtName Start Label;
+run;
 
-data country_info;
-	set cr.country_info;
+proc format cntlin=contfmt;
 run;
