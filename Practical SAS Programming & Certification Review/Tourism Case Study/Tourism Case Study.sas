@@ -104,9 +104,9 @@ run;
 /*    countries from the cleaned_tourism table that do  	*/
 /*    not have a match in the country_info table. 			*/
 
-data final_tourism nocountryfound;
+data final_tourism cr.nocountryfound;
 	set cleaned_tourism;
-	if Continent="" then output nocountryfound;
+	if Continent="" then output cr.nocountryfound;
 	else output final_tourism;
 run;
 
@@ -130,12 +130,44 @@ run;
 
 /* Apply the format to the "final_tourism" table... */
 
-data final_tourism;
+data cr.final_tourism;
 	set final_tourism;
 	format Continent contfmt.;
+	output cr.final_tourism;
 run;
 
 proc means data=final_tourism sum maxdec=0;
     var Y2014;
     class Continent;
 run;
+
+/****************************************************************************/
+/* Question 1: Write a program to analyze the number of arrivals in 2014  	*/
+/* for each continent. Generate mean, minimum, and maximum statistics,  	*/
+/* rounded to the nearest whole number. 									*/
+/* What continent has the highest average number of arrivals for 2014? 		*/
+/****************************************************************************/
+
+proc sort data=cr.final_tourism out=final_tourism;
+	by Continent Category;
+run;
+	
+
+proc means data=final_tourism n mean min max;
+	where Category="Arrivals";
+	by Continent;
+run;
+
+/********************************************************************************/
+/* Question 2: Modify your program to generate an overall mean (rounded to     	*/
+/* the nearest whole number) for tourism expenditure in other countries.  		*/
+/*  																			*/
+/* What was the overall mean tourism expenditure in other countries for 2014?  	*/
+/* Use only numerals in your answer. 											*/
+/********************************************************************************/
+
+proc means data=cr.final_tourism mean maxdec=0;	
+	var y2014;
+	where lowcase(Category) contains "tourism expenditure in other countries";
+run;
+
