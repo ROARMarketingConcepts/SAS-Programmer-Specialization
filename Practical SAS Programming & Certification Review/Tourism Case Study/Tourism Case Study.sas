@@ -110,11 +110,32 @@ data final_tourism nocountryfound;
 	else output final_tourism;
 run;
 
+/* Clean the continent codes file to remove the leading "9" in the code */
+
+data continent_codes;
+	set cr.continent_codes;
+	Code=Code-90;
+run;
+
+/* Create the format table to convert continent code to continent name... */
+
 data contfmt;
 	retain FmtName "contfmt";
-	set cr.continent_codes (rename=(Code=Start Continent=Label));
+	set continent_codes (rename=(Code=Start Continent=Label));
 	keep FmtName Start Label;
 run;
 
 proc format cntlin=contfmt;
+run;
+
+/* Apply the format to the "final_tourism" table... */
+
+data final_tourism;
+	set final_tourism;
+	format Continent contfmt.;
+run;
+
+proc means data=final_tourism sum maxdec=0;
+    var Y2014;
+    class Continent;
 run;
