@@ -1,0 +1,13 @@
+data parks monuments;
+	set pg1.np_summary;
+	where Type in ("NP","NM");
+	Campers = sum(OtherCamping,TentCampers,RVCampers,BackcountryCampers);
+	if Type = "NP" then do;
+		ParkType = "Park";
+		output parks;
+		end;
+	if Type = "NM" then do;
+		ParkType = "Monument";
+		output monuments;
+		end;
+run;
